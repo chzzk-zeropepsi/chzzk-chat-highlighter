@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        width: 280px;
+        margin: 0;
+        padding: 12px;
+        font-family: "Pretendard", -apple-system, system-ui, sans-serif;
+        background: #18181b;
+        color: #efeff1;
+      }
+      h1 {
+        font-size: 14px;
+        margin: 0 0 4px;
+      }
+      .hint {
+        font-size: 11px;
+        color: #adadb8;
+        margin: 0 0 12px;
+        line-height: 1.5;
+      }
+      .hint b {
+        color: #00ffa3;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+      li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 4px;
+        border-bottom: 1px solid #2a2a2e;
+      }
+      .nick {
+        flex: 1;
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      input[type="color"] {
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+      }
+      .del {
+        background: none;
+        border: none;
+        color: #ff6b6b;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0 4px;
+      }
+      .empty {
+        font-size: 12px;
+        color: #adadb8;
+        padding: 16px 4px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>채팅 하이라이터</h1>
+    <p class="hint">
+      치지직 채팅창에서 강조할 사람의 메시지를 <b>우클릭</b>하면 추가/해제됩니다.<br />
+      유저 고유 ID(hash)로 기억하므로 닉네임을 바꿔도 계속 강조돼요.<br />
+      아래에서 색을 바꾸거나 삭제할 수 있어요.
+    </p>
+    <ul id="list"></ul>
+    <script src="popup.js"></script>
+  </body>
+</html>

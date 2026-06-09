@@ -1,0 +1,39 @@
+# 치지직 채팅 하이라이터 (chzzk-chat-highlighter)
+
+치지직 채팅창에서 특정 유저의 채팅만 유저별 색상으로 강조해주는 크롬 확장 (MV3).
+
+## 사용법
+
+1. `chrome://extensions` → 우상단 **개발자 모드** ON
+2. **압축해제된 확장 프로그램을 로드** → 이 폴더 선택
+3. 치지직 라이브 페이지에서 **채팅 메시지를 우클릭** → 그 작성자가 하이라이트 목록에 추가/해제
+4. 확장 아이콘(팝업)에서 색 변경·삭제
+
+## 식별 방식 (hash 기준)
+
+닉네임이 아니라 유저 고유 ID(`uid`, 치지직 hash)로 사람을 기억한다. 그래서:
+
+- 닉네임을 바꿔도 계속 강조됨
+- 동명이인(닉네임 같은 다른 사람)도 구분됨
+- 어느 방송 채널에 가도 같은 사람이면 강조됨
+
+`uid`는 DOM에 노출되지 않으므로 **채팅 WebSocket 프레임**에서 읽는다.
+`content/inject.js`(MAIN world, document_start)가 `WebSocket`을 후킹해
+각 채팅의 `{uid, 닉네임, 본문}`을 뽑아 `postMessage` → `content/content.js`(격리 월드)가
+`(닉네임+본문)→uid` 매핑을 만들어 채팅 줄에 `data-cch-uid`를 부여하고 강조한다.
+
+## 구조
+
+- `manifest.json` — MV3, `storage` 권한, content script 2개(MAIN/격리)
+- `content/inject.js` — MAIN world. WebSocket 후킹 → uid/nick/msg 추출
+- `content/content.js` — 격리 월드. WS 매핑 + DOM 관찰 + 우클릭 토글 + 강조
+- `content/content.css` — 토스트 스타일
+- `popup/` — 하이라이트 목록 관리 UI (uid별 색/삭제)
+
+## 주의
+
+- 치지직 CSS 모듈 해시 클래스명을 `[class*="..."]` 부분 일치로 잡는다.
+  치지직이 클래스 규칙을 바꾸면 `content/content.js`의 `SEL` 상수를 갱신.
+- WebSocket 프레임 구조(`bdy[].uid`, `bdy[].profile`(JSON, `nickname`), `bdy[].msg`)에
+  의존한다. 치지직이 프로토콜을 바꾸면 `content/inject.js`의 파싱부를 갱신.
+- 본문이 이모티콘뿐이면 (닉네임+본문) 정밀 매칭이 어긋날 수 있어, 닉네임→uid 폴백으로 보정.

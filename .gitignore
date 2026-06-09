@@ -1,0 +1,11 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# Python (아이콘 생성기)
+__pycache__/
+*.pyc
+
+# 빌드 산출물
+*.zip
