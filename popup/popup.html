@@ -6,8 +6,11 @@
       :root {
         color-scheme: dark;
       }
+      * {
+        box-sizing: border-box;
+      }
       body {
-        width: 280px;
+        width: 320px;
         margin: 0;
         padding: 12px;
         font-family: "Pretendard", -apple-system, system-ui, sans-serif;
@@ -21,25 +24,115 @@
       .hint {
         font-size: 11px;
         color: #adadb8;
-        margin: 0 0 12px;
+        margin: 0 0 10px;
         line-height: 1.5;
       }
       .hint b {
         color: #00ffa3;
       }
+      .toolbar {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .toolbar input {
+        flex: 1;
+        min-width: 0;
+        background: #0e0e10;
+        border: 1px solid #2a2a2e;
+        border-radius: 6px;
+        color: #efeff1;
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+      .btn {
+        background: #2a2a2e;
+        border: none;
+        border-radius: 6px;
+        color: #efeff1;
+        font-size: 12px;
+        padding: 6px 10px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .btn:hover {
+        background: #3a3a3e;
+      }
+      .btn.primary {
+        background: #00b377;
+        color: #04130d;
+        font-weight: 700;
+      }
+      .folder {
+        margin-bottom: 12px;
+      }
+      .folder-head {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 2px;
+        border-bottom: 1px solid #2a2a2e;
+        margin-bottom: 2px;
+      }
+      .folder-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #00ffa3;
+      }
+      .folder-name.unfiled {
+        color: #8a8a92;
+      }
+      .folder-name-input {
+        font-size: 12px;
+        font-weight: 700;
+        background: #0e0e10;
+        border: 1px solid #00b377;
+        border-radius: 4px;
+        color: #efeff1;
+        padding: 2px 6px;
+      }
+      .folder-count {
+        font-size: 11px;
+        color: #6a6a72;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .icon-btn {
+        background: none;
+        border: none;
+        color: #8a8a92;
+        cursor: pointer;
+        font-size: 13px;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+      .icon-btn:hover {
+        color: #efeff1;
+        background: #2a2a2e;
+      }
       ul {
         list-style: none;
         margin: 0;
         padding: 0;
-        max-height: 320px;
-        overflow-y: auto;
       }
       li {
+        padding: 6px 2px;
+        border-bottom: 1px solid #1f1f23;
+      }
+      .row {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 4px;
-        border-bottom: 1px solid #2a2a2e;
+      }
+      input[type="color"] {
+        width: 24px;
+        height: 24px;
+        flex: none;
+        border: none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
       }
       .nick {
         flex: 1;
@@ -48,21 +141,38 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      input[type="color"] {
-        width: 26px;
-        height: 26px;
-        border: none;
-        background: none;
-        padding: 0;
+      select.move {
+        max-width: 96px;
+        background: #0e0e10;
+        border: 1px solid #2a2a2e;
+        border-radius: 6px;
+        color: #adadb8;
+        font-size: 11px;
+        padding: 3px 4px;
         cursor: pointer;
       }
       .del {
-        background: none;
-        border: none;
         color: #ff6b6b;
-        font-size: 16px;
-        cursor: pointer;
-        padding: 0 4px;
+      }
+      .memo-btn.has-memo {
+        color: #ffd54f;
+      }
+      textarea.memo {
+        display: none;
+        width: 100%;
+        margin-top: 6px;
+        background: #0e0e10;
+        border: 1px solid #2a2a2e;
+        border-radius: 6px;
+        color: #efeff1;
+        font-family: inherit;
+        font-size: 12px;
+        padding: 6px 8px;
+        resize: vertical;
+        min-height: 44px;
+      }
+      textarea.memo.open {
+        display: block;
       }
       .empty {
         font-size: 12px;
@@ -75,11 +185,14 @@
   <body>
     <h1>채팅 하이라이터</h1>
     <p class="hint">
-      치지직 채팅창에서 강조할 사람의 메시지를 <b>우클릭</b>하면 추가/해제됩니다.<br />
-      유저 고유 ID(hash)로 기억하므로 닉네임을 바꿔도 계속 강조돼요.<br />
-      아래에서 색을 바꾸거나 삭제할 수 있어요.
+      치지직 채팅에서 강조할 사람을 <b>우클릭</b>하면 추가됩니다.<br />
+      폴더로 묶고 📝로 메모(강조한 이유)를 남길 수 있어요.
     </p>
-    <ul id="list"></ul>
+    <div class="toolbar">
+      <input id="new-folder" placeholder="새 폴더 이름" maxlength="20" />
+      <button class="btn primary" id="add-folder">＋ 폴더</button>
+    </div>
+    <div id="list"></div>
     <script src="popup.js"></script>
   </body>
 </html>

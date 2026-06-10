@@ -71,11 +71,13 @@
       container.style.background = hexToRgba(t.color, 0.18);
       container.style.borderLeft = `3px solid ${t.color}`;
       container.style.borderRadius = "4px";
+      container.title = t.memo || ""; // 메모가 있으면 hover 툴팁
       container.dataset.cchOn = "1";
     } else if (container.dataset.cchOn) {
       container.style.background = "";
       container.style.borderLeft = "";
       container.style.borderRadius = "";
+      container.removeAttribute("title");
       delete container.dataset.cchOn;
     }
   }
@@ -144,7 +146,7 @@
         delete targets[uid];
         toast(`"${nick || uid}" 하이라이트 해제`);
       } else {
-        targets[uid] = { color: pickColor(), nick: nick || "" };
+        targets[uid] = { color: pickColor(), nick: nick || "", memo: "", folder: "" };
         toast(`"${nick || uid}" 하이라이트 추가`, targets[uid].color);
       }
       save();

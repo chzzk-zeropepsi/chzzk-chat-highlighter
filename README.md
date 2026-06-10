@@ -7,7 +7,10 @@
 1. `chrome://extensions` → 우상단 **개발자 모드** ON
 2. **압축해제된 확장 프로그램을 로드** → 이 폴더 선택
 3. 치지직 라이브 페이지에서 **채팅 메시지를 우클릭** → 그 작성자가 하이라이트 목록에 추가/해제
-4. 확장 아이콘(팝업)에서 색 변경·삭제
+4. 확장 아이콘(팝업)에서 관리:
+   - 유저별 **색 변경**, 삭제
+   - **폴더**로 묶기 (폴더 생성/이름변경/삭제, 유저를 드롭다운으로 폴더 이동)
+   - 📝 **메모** — 강조한 이유 기록. 메모가 있으면 채팅 위에 hover 시 툴팁으로 표시
 
 ## 식별 방식 (hash 기준)
 
@@ -28,7 +31,8 @@
 - `content/inject.js` — MAIN world. WebSocket 후킹 → uid/nick/msg 추출
 - `content/content.js` — 격리 월드. WS 매핑 + DOM 관찰 + 우클릭 토글 + 강조
 - `content/content.css` — 토스트 스타일
-- `popup/` — 하이라이트 목록 관리 UI (uid별 색/삭제)
+- `popup/` — 관리 UI: uid별 색/삭제, 폴더 그룹화, 메모
+  - 저장: `chrome.storage.local` — `cch_targets`(`{uid:{color,nick,memo,folder}}`), `cch_folders`(`[{id,name}]`)
 
 ## 주의
 
