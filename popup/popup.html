@@ -30,6 +30,20 @@
       .hint b {
         color: #00ffa3;
       }
+      .opt {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #efeff1;
+        margin-bottom: 10px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .opt input {
+        accent-color: #00b377;
+        cursor: pointer;
+      }
       .toolbar {
         display: flex;
         gap: 6px;
@@ -188,6 +202,10 @@
       치지직 채팅에서 강조할 사람을 <b>우클릭</b>하면 추가됩니다.<br />
       폴더로 묶고 📝로 메모(강조한 이유)를 남길 수 있어요.
     </p>
+    <label class="opt">
+      <input type="checkbox" id="hide-dono" />
+      <span>도네이션 채팅 숨기기</span>
+    </label>
     <div class="toolbar">
       <input id="new-folder" placeholder="새 폴더 이름" maxlength="20" />
       <button class="btn primary" id="add-folder">＋ 폴더</button>

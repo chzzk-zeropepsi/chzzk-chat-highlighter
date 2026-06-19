@@ -2,7 +2,15 @@
 // 지정 유저(uid 기준)의 채팅을 유저별 색상으로 강조한다.
 (function () {
   const STORE_KEY = "cch_targets"; // { "<uid>": { color: "#rrggbb", nick: "<표시닉>" } }
+  const HIDE_DONO_KEY = "cch_hideDono"; // bool — 도네이션 채팅 숨기기
   const WS_TAG = "__CCH_WS__";
+
+  // 도네이션 채팅 행 셀렉터.
+  // 도네 행 래퍼는 `_item_xxx _small_padding_xxx` 형태 → 채팅 행(_item_) 중
+  // _small_padding 이 붙은 것만 숨긴다. 해시는 빌드마다 바뀌므로 부분일치.
+  // (안전망: _is_donation_ 마커를 가진 행도 함께)
+  const DONATION_SEL =
+    '[class*="_item_"][class*="_small_padding"], [class*="_item_"]:has([class*="_is_donation_"])';
 
   const PALETTE = [
     "#ffd54f", "#4fc3f7", "#81c784", "#ff8a65",
@@ -10,12 +18,14 @@
     "#9575cd", "#aed581", "#7986cb", "#ffb74d",
   ];
 
-  // 치지직 CSS 모듈 해시 클래스 → 부분 일치 셀렉터
+  // 치지직 CSS 모듈 해시 클래스 → 부분 일치 셀렉터 (2026-06 실제 DOM 기준)
+  //  행 래퍼:  _item_xxx  (도네는 _small_padding_ 추가)
+  //  닉네임:   _nickname_ 버튼의 textContent (뱃지는 <img>라 텍스트 없음)
+  //  본문:     _chatting_message_ 의 직속 _text_ 자식 (닉 텍스트 _text_dtc6c 는 버튼 안 중첩)
   const SEL = {
-    container: '[class*="live_chatting_message_container"]',
-    nickname:
-      '[class*="username_nickname"], [class*="user_nickname"], [class*="name_text"]',
-    text: '[class*="message_text"], [class*="chatting_message_text"]',
+    container: '[class*="_item_"]',
+    nickname: '[class*="_nickname_"]',
+    text: '[class*="_chatting_message_"] > [class*="_text_"]',
   };
 
   let targets = {}; // uid -> {color, nick}
@@ -27,13 +37,25 @@
   const MAX_MAP = 600;
 
   function load(cb) {
-    chrome.storage.local.get(STORE_KEY, (r) => {
+    chrome.storage.local.get([STORE_KEY, HIDE_DONO_KEY], (r) => {
       targets = r[STORE_KEY] || {};
+      setHideDonation(!!r[HIDE_DONO_KEY]);
       cb && cb();
     });
   }
   function save() {
     chrome.storage.local.set({ [STORE_KEY]: targets });
+  }
+
+  // 도네이션 숨기기: 전역 <style> 한 줄로 토글
+  function setHideDonation(on) {
+    let s = document.getElementById("cch-style");
+    if (!s) {
+      s = document.createElement("style");
+      s.id = "cch-style";
+      (document.head || document.documentElement).appendChild(s);
+    }
+    s.textContent = on ? `${DONATION_SEL}{display:none !important;}` : "";
   }
 
   function getNick(container) {
@@ -157,10 +179,12 @@
 
   // 팝업에서 변경 시 즉시 반영
   chrome.storage.onChanged.addListener((ch, area) => {
-    if (area === "local" && ch[STORE_KEY]) {
+    if (area !== "local") return;
+    if (ch[STORE_KEY]) {
       targets = ch[STORE_KEY].newValue || {};
       scanAll();
     }
+    if (ch[HIDE_DONO_KEY]) setHideDonation(!!ch[HIDE_DONO_KEY].newValue);
   });
 
   // 토스트

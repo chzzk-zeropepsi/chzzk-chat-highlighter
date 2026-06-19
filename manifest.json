@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "치지직 채팅 하이라이터 (chzzk-chat-highlighter)",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "치지직 채팅창에서 특정 유저의 채팅만 유저별 색상으로 강조해주는 확장",
   "permissions": ["storage"],
   "host_permissions": ["https://chzzk.naver.com/*"],

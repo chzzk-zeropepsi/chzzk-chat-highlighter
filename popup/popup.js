@@ -1,16 +1,19 @@
 const STORE_KEY = "cch_targets"; // { uid: { color, nick, memo, folder } }
 const FOLDER_KEY = "cch_folders"; // [ { id, name } ]
+const HIDE_DONO_KEY = "cch_hideDono"; // bool
 
 const listEl = document.getElementById("list");
 const newFolderInput = document.getElementById("new-folder");
+const hideDonoEl = document.getElementById("hide-dono");
 
 let targets = {};
 let folders = [];
 
 function loadAll(cb) {
-  chrome.storage.local.get([STORE_KEY, FOLDER_KEY], (r) => {
+  chrome.storage.local.get([STORE_KEY, FOLDER_KEY, HIDE_DONO_KEY], (r) => {
     targets = r[STORE_KEY] || {};
     folders = r[FOLDER_KEY] || [];
+    hideDonoEl.checked = !!r[HIDE_DONO_KEY];
     cb && cb();
   });
 }
@@ -240,6 +243,10 @@ document.getElementById("add-folder").addEventListener("click", () => {
 });
 newFolderInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") document.getElementById("add-folder").click();
+});
+
+hideDonoEl.addEventListener("change", () => {
+  chrome.storage.local.set({ [HIDE_DONO_KEY]: hideDonoEl.checked });
 });
 
 // 다른 곳(채팅 우클릭 등)에서 바뀌면 갱신
