@@ -1,6 +1,12 @@
 # 치지직 채팅 하이라이터 (chzzk-chat-highlighter)
 
+[![total downloads](https://img.shields.io/github/downloads/chzzk-zeropepsi/chzzk-chat-highlighter/total?label=total%20downloads&color=00b377)](https://github.com/chzzk-zeropepsi/chzzk-chat-highlighter/releases)
+[![latest release downloads](https://img.shields.io/github/downloads/chzzk-zeropepsi/chzzk-chat-highlighter/latest/total?label=latest%20downloads&color=00b377)](https://github.com/chzzk-zeropepsi/chzzk-chat-highlighter/releases/latest)
+[![latest version](https://img.shields.io/github/v/release/chzzk-zeropepsi/chzzk-chat-highlighter?label=version&color=00b377)](https://github.com/chzzk-zeropepsi/chzzk-chat-highlighter/releases/latest)
+
 치지직 채팅창에서 특정 유저의 채팅만 유저별 색상으로 강조해주는 크롬 확장 (MV3).
+
+> 배지의 다운로드 수는 GitHub Releases에 올린 zip 자산의 누적/최신 릴리스 다운로드 횟수입니다. (shields.io 제공, 약간의 캐시 지연 있음)
 
 ## 사용법
 
