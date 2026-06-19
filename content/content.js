@@ -5,12 +5,11 @@
   const HIDE_DONO_KEY = "cch_hideDono"; // bool — 도네이션 채팅 숨기기
   const WS_TAG = "__CCH_WS__";
 
-  // 도네이션 채팅 행 셀렉터.
-  // 도네 행 래퍼는 `_item_xxx _small_padding_xxx` 형태 → 채팅 행(_item_) 중
-  // _small_padding 이 붙은 것만 숨긴다. 해시는 빌드마다 바뀌므로 부분일치.
-  // (안전망: _is_donation_ 마커를 가진 행도 함께)
-  const DONATION_SEL =
-    '[class*="_item_"][class*="_small_padding"], [class*="_item_"]:has([class*="_is_donation_"])';
+  // 도네이션 마커. 도네는 프로필 컨테이너에 `_is_donation_`, 일반은 `_is_message_`.
+  // CSS :has 로 숨기면 클래스에 `_item_`이 든 상위 리스트 컨테이너까지 매칭돼
+  // 일반 채팅이 통째로 사라지는 문제가 있어, JS로 "마커의 closest(_item_) 행"만 숨긴다.
+  const DONO_MARK = '[class*="_is_donation_"]';
+  let hideDono = false;
 
   const PALETTE = [
     "#ffd54f", "#4fc3f7", "#81c784", "#ff8a65",
@@ -39,7 +38,7 @@
   function load(cb) {
     chrome.storage.local.get([STORE_KEY, HIDE_DONO_KEY], (r) => {
       targets = r[STORE_KEY] || {};
-      setHideDonation(!!r[HIDE_DONO_KEY]);
+      hideDono = !!r[HIDE_DONO_KEY];
       cb && cb();
     });
   }
@@ -47,15 +46,21 @@
     chrome.storage.local.set({ [STORE_KEY]: targets });
   }
 
-  // 도네이션 숨기기: 전역 <style> 한 줄로 토글
-  function setHideDonation(on) {
-    let s = document.getElementById("cch-style");
-    if (!s) {
-      s = document.createElement("style");
-      s.id = "cch-style";
-      (document.head || document.documentElement).appendChild(s);
+  // 도네 행 여부: 한 행(container)에 도네 마커가 있고, 그 마커의 가장 가까운
+  // _item_ 조상이 바로 이 행일 때만 true (상위 리스트 컨테이너 오탐 방지).
+  function isDonoRow(container) {
+    const mark = container.querySelector(DONO_MARK);
+    return !!mark && mark.closest(SEL.container) === container;
+  }
+  // 토글 OFF 또는 일반 행이면 display 복구, 도네 행이면 숨김.
+  function applyDono(container) {
+    if (hideDono && isDonoRow(container)) {
+      container.style.display = "none";
+      container.dataset.cchHidden = "1";
+    } else if (container.dataset.cchHidden) {
+      container.style.display = "";
+      delete container.dataset.cchHidden;
     }
-    s.textContent = on ? `${DONATION_SEL}{display:none !important;}` : "";
   }
 
   function getNick(container) {
@@ -102,6 +107,7 @@
       container.removeAttribute("title");
       delete container.dataset.cchOn;
     }
+    applyDono(container);
   }
 
   function scanAll() {
@@ -180,11 +186,9 @@
   // 팝업에서 변경 시 즉시 반영
   chrome.storage.onChanged.addListener((ch, area) => {
     if (area !== "local") return;
-    if (ch[STORE_KEY]) {
-      targets = ch[STORE_KEY].newValue || {};
-      scanAll();
-    }
-    if (ch[HIDE_DONO_KEY]) setHideDonation(!!ch[HIDE_DONO_KEY].newValue);
+    if (ch[STORE_KEY]) targets = ch[STORE_KEY].newValue || {};
+    if (ch[HIDE_DONO_KEY]) hideDono = !!ch[HIDE_DONO_KEY].newValue;
+    if (ch[STORE_KEY] || ch[HIDE_DONO_KEY]) scanAll();
   });
 
   // 토스트
